@@ -1,0 +1,15 @@
+== Changelog ==
+= 1.1.5 2024-03-15 =
+
+*Add: Order Custom Tax Rate
+
+= 1.1.6 2024-04-22 =
+*Add: "Compatible with the 'Sequential Order Numbers for WooCommerce by SkyVerge' plugin."
+
+= 1.1.7 2024-08-02 =
+
+*Fix Bug
+
+= 1.1.8 2024-08-14 =
+
+*Add: "Allows retaining the order number in WooCommerce."
