@@ -25,6 +25,8 @@ class LitCommerce_SendWooCommerceKeysStep implements LitCommerce_Automation
 		$url     = self::URL_APP . '/merchants/woocommerce?consumer_key=' . $consumerKey;
 		$url     .= '&consumer_secret=' . $consumerSecret;
 		$url     .= '&channel_url=' . urlencode( site_url() );
+        $url     .= '&from_app=marketplace';
+
 		if(@$_GET['reconnect'] == 1){
 			$url .= '&reconnect=1';
 		}

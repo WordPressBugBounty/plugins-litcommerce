@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.1.9
+Version: 1.2.0
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -13,11 +13,48 @@ class LitCommercePlugin {
 	/** @var LitCommerce_Automation[] */
 	public $steps = [];
 
-	public function registerPluginHooks() {
-		add_menu_page('Litcommerce Integration', 'Litcommerce', 'manage_options', 'litcommerce', [$this, 'renderPage']);
-		add_action('admin_action_litcommerce_integrate', [$this, 'integrate']);
-		add_action('admin_enqueue_scripts', [$this, 'enqueueScripts']);
-	}
+    public function registerPluginHooks() {
+        if($this->is_multy_app()){
+            add_menu_page('Litcommerce',
+                'Litcommerce',
+                'manage_options',
+                'litcommerce-master',
+                [$this, 'litcommerce_menu_redirect'],
+                plugins_url('images/logo.png', __FILE__),
+            );
+            add_submenu_page(
+                'litcommerce-master',
+                'LitCommerce: Marketplace Integration',
+                'Marketplace Integration',
+                'manage_options',
+                'litcommerce-integration',
+                [$this, 'renderPage']
+            );
+        }else{
+            add_menu_page(
+                'Litcommerce',
+                'Litcommerce',
+                'manage_options',
+                'litcommerce-integration',
+                [$this, 'renderPage'],
+                plugins_url('images/logo.png', __FILE__),
+
+            );
+        }
+
+
+        remove_submenu_page('litcommerce-master', 'litcommerce-master');
+
+        add_action('admin_action_litcommerce_integrate', [$this, 'integrate']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueScripts']);
+    }
+
+    function is_multy_app(){
+        if (is_plugin_active('litcommerce_feed/litcommerce_feed.php')) {
+            return true;
+        }
+        return false;
+    }
 
 	function integrate() {
 		$stepIndex = isset($_POST['step']) ? intval($_POST['step']) : -1;
@@ -60,7 +97,7 @@ class LitCommercePlugin {
 	}
 
 	function renderPage() {
-		echo '<h1>LitCommerce Integration</h1>';
+		echo '<h1>LitCommerce: Marketplace Integration</h1>';
 		$is_reconnect = get_litc_params('reconnect') == 1;
 		if (!empty(get_option('woocommerce_litcommerce_consumer_key'))) {
 			$is_connected = true;
@@ -127,7 +164,7 @@ class LitCommercePlugin {
             <a type="submit" href="https://app.litcommerce.com" target="_blank" class="button button-primary"
                id="btn-submit"><?php echo esc_attr($buttonLabel); ?></a>
 			<?php
-			$url = site_url() . '/wp-admin/admin.php?page=litcommerce&reconnect=1'
+			$url = site_url() . '/wp-admin/admin.php?page=litcommerce-integration&reconnect=1'
 			?>
             <p style="font-style: italic">If your site is not yet connected to LitCommerce, please <a
                         href="<?php echo $url; ?>">click here</a> to reconnect</p>

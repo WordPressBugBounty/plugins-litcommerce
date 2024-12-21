@@ -43,7 +43,7 @@ function litCommerce_WC_Auth()
 			public function createAPIKey($userId)
 			{
 				return $this->create_keys(
-					'LitCommerce Integration',
+					'LitCommerce: Marketplace Integration',
 					$userId,
 					'read_write'
 				);
