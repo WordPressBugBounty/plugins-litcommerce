@@ -2,11 +2,12 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.0
+Version: 1.2.3
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
 Text Domain: litcommerce
+Requires Plugins: woocommerce
 */
 
 class LitCommercePlugin {
@@ -50,7 +51,7 @@ class LitCommercePlugin {
     }
 
     function is_multy_app(){
-        if (is_plugin_active('litcommerce_feed/litcommerce_feed.php')) {
+        if (is_plugin_active('litcommerce-feed/litcommerce-feed.php')) {
             return true;
         }
         return false;
@@ -196,7 +197,7 @@ $litcommercePlugin->steps[] = new LitCommerce_SendWooCommerceKeysStep();
 
 add_action('admin_menu', [$litcommercePlugin, 'registerPluginHooks']);
 add_filter('woocommerce_rest_product_object_query', function ( array $args, \WP_REST_Request $request ) {
-	$modified_after = $request->get_param('modified_after');
+	$modified_after = get_litc_params('modified_after');
 
 	if (!$modified_after) {
 		return $args;
@@ -212,8 +213,8 @@ add_filter('woocommerce_rest_product_object_query', function ( array $args, \WP_
 		'paged' => 'litcommercepag',
 	];
 	foreach ($fields as $field => $param) {
-		if ($request->get_param($param)) {
-			$args[$field] = $request->get_param($param);
+		if (get_litc_params($param)) {
+			$args[$field] = get_litc_params($param);
 		}
 	}
 	if ('date' === $args['orderby']) {
@@ -223,7 +224,7 @@ add_filter('woocommerce_rest_product_object_query', function ( array $args, \WP_
 
 }, 10, 2);
 add_filter('woocommerce_rest_shop_order_object_query', function ( array $args, \WP_REST_Request $request ) {
-	$modified_after = $request->get_param('modified_after');
+	$modified_after = get_litc_params('modified_after');
 
 	if (!$modified_after) {
 		return $args;
@@ -239,8 +240,8 @@ add_filter('woocommerce_rest_shop_order_object_query', function ( array $args, \
 		'paged' => 'litcommercepage',
 	];
 	foreach ($fields as $field => $param) {
-		if ($request->get_param($param)) {
-			$args[$field] = $request->get_param($param);
+		if (get_litc_params($param)) {
+			$args[$field] = get_litc_params($param);
 		}
 	}
 	return $args;
@@ -369,7 +370,7 @@ function litc_shop_order_meta_search_fields( $meta_keys ) {
 
 add_filter('woocommerce_shop_order_search_fields', 'litc_shop_order_meta_search_fields', 10, 1);
 function litc_woocommerce_rest_prepare_product_object( $response, $object, $request ) {
-	if ($request->get_param("custom_currency") == 1) {
+	if (get_litc_params("custom_currency") == 1) {
 		$meta = get_post_meta($object->get_id());
 		foreach ($meta as $key => $value) {
 			if (in_array($key, ['_price', '_regular_price', '_sale_price'])) {
@@ -378,8 +379,8 @@ function litc_woocommerce_rest_prepare_product_object( $response, $object, $requ
 		}
 	}
 
-	if ($request->get_param("get_terms")) {
-		$terms = explode(',', $request->get_param("get_terms"));
+	if (get_litc_params("get_terms")) {
+		$terms = explode(',', get_litc_params("get_terms"));
 		foreach ($terms as $term) {
 			$terms_data = wp_get_post_terms($object->get_id(), $term);
 			$res = [];
@@ -452,10 +453,11 @@ function litc_admin_order_item_values( $_product, $item, $item_id = null ) {
 }
 function get_litc_params($key)
 {
-    if(isset($_GET[$key])) {
-        return $_GET[$key];
+    $value = filter_input( INPUT_GET, $key, FILTER_SANITIZE_STRING );
+    if(!$value){
+        $value = null;
     }
-    return null;
+    return $value;
 }
 
 function litc_woocommerce_hidden_order_itemmeta( $arr ) {
@@ -517,3 +519,130 @@ function litc_woocommerce_rest_pre_insert_shop_order_object( $order ) {
 }
 
 add_filter('woocommerce_rest_pre_insert_shop_order_object', 'litc_woocommerce_rest_pre_insert_shop_order_object', 10);
+
+
+add_action('rest_api_init', function () {
+    register_rest_route('wc/v3/litc', '/products/(?P<id>\d+)/images', array(
+        'methods' => 'POST',
+        'callback' => 'litc_add_product_images',
+        'permission_callback' => function () {
+            return current_user_can('edit_products');
+        },
+    ));
+    register_rest_route('wc/v3/litc', '/products/(?P<product_id>\d+)/images/(?P<image_id>\d+)', array(
+        'methods' => 'DELETE',
+        'callback' => 'litc_delete_product_image',
+        'permission_callback' => function () {
+            return current_user_can('edit_products');
+        },
+    ));
+});
+
+function litc_add_product_images($request) {
+    $product_id = $request['id'];
+    $images = $request->get_param('images');
+
+    if (!is_array($images) || empty($images)) {
+        return new WP_Error('invalid_images', 'Invalid images array', array('status' => 400));
+    }
+
+    if (!get_post($product_id) || get_post_type($product_id) !== 'product') {
+        return new WP_Error('invalid_product', 'Product not found', array('status' => 404));
+    }
+
+    $uploaded_images = [];
+
+    foreach ($images as $image_url) {
+        $image_id = litc_upload_image_from_url($image_url);
+
+        if (is_wp_error($image_id)) {
+            return new WP_Error('image_upload_failed', 'Failed to upload image: ' . $image_url, array('status' => 500));
+        }
+
+        $uploaded_images[] = $image_id;
+    }
+
+    $product = wc_get_product($product_id);
+    $existing_gallery = $product->get_gallery_image_ids();
+    $updated_gallery = array_merge($existing_gallery, $uploaded_images);
+    $product->set_gallery_image_ids($updated_gallery);
+    $product->save();
+
+    return rest_ensure_response([
+        'success' => true,
+        'uploaded_images' => $uploaded_images,
+    ]);
+}
+
+function litc_upload_image_from_url($image_url) {
+    $upload_dir = wp_upload_dir();
+    $image_data = file_get_contents($image_url);
+
+    if (!$image_data) {
+        return new WP_Error('image_fetch_failed', 'Could not fetch image from URL.');
+    }
+
+    $filename = basename($image_url);
+    $file_path = $upload_dir['path'] . '/' . $filename;
+
+    file_put_contents($file_path, $image_data);
+
+    $filetype = wp_check_filetype($filename, null);
+
+    if (!$filetype['type']) {
+        return new WP_Error('invalid_image_type', 'Invalid image type.');
+    }
+
+    $attachment_id = wp_insert_attachment(
+        [
+            'guid' => $upload_dir['url'] . '/' . $filename,
+            'post_mime_type' => $filetype['type'],
+            'post_title' => sanitize_file_name($filename),
+            'post_content' => '',
+            'post_status' => 'inherit',
+        ],
+        $file_path
+    );
+
+    require_once(ABSPATH . 'wp-admin/includes/image.php');
+    $attach_data = wp_generate_attachment_metadata($attachment_id, $file_path);
+    wp_update_attachment_metadata($attachment_id, $attach_data);
+
+    return $attachment_id;
+}
+
+
+function litc_delete_product_image($request) {
+    $product_id = $request['product_id'];
+    $image_id = $request['image_id'];
+    $force = $request->get_param('force');
+    if (!get_post($product_id) || get_post_type($product_id) !== 'product') {
+        return new WP_Error('invalid_product', 'Product not found', array('status' => 404));
+    }
+
+    if (!get_post($image_id)) {
+        return new WP_Error('invalid_image', 'Image not found', array('status' => 404));
+    }
+
+    $product = wc_get_product($product_id);
+    $gallery = $product->get_gallery_image_ids();
+
+    if (!in_array($image_id, $gallery)) {
+        return new WP_Error('image_not_in_product', 'Image is not associated with this product.', array('status' => 400));
+    }
+
+    $updated_gallery = array_diff($gallery, [$image_id]);
+    $product->set_gallery_image_ids($updated_gallery);
+    $product->save();
+
+    if ($force === true || $force === 'true') {
+        wp_delete_attachment($image_id, true);
+    }
+
+
+    return rest_ensure_response([
+        'success' => true,
+        'message' => 'Image removed from product successfully.',
+        'remaining_images' => $updated_gallery,
+    ]);
+}

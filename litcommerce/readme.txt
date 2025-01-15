@@ -2,10 +2,8 @@
 Author URI: https://www.litcommerce.com
 Contributors: LitCommerce
 Tags: WooCommerce, Amazon, eBay, Etsy, TikTok
-Requires at least: 5.0
 Tested up to: 6.7.1
-Requires PHP: 5.6
-Stable tag: 1.0.5
+Stable tag: 1.2.3
 License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

@@ -13,3 +13,19 @@
 = 1.1.8 2024-08-14 =
 
 *Add: "Allows retaining the order number in WooCommerce."
+
+= 1.2.0 2024-12-12 =
+
+*Update: "Menu Page"
+
+= 1.2.1 2024-12-25 =
+
+*Fixed: "Menu Page"
+
+= 1.2.2 2025-01-13 =
+
+*Fixed: "Menu Page"
+
+= 1.2.3 2025-01-15 =
+
+*Add: "Api Add/Delete Image For Product"
