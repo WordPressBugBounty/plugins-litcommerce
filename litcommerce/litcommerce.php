@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.4
+Version: 1.2.5
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -453,10 +453,9 @@ function litc_admin_order_item_values( $_product, $item, $item_id = null ) {
 }
 function get_litc_params($key)
 {
-    $value = htmlspecialchars(filter_input(INPUT_GET, $key), ENT_QUOTES, 'UTF-8');
-
+    $value = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
     if(!$value){
-        $value = null;
+        return null;
     }
     return $value;
 }
