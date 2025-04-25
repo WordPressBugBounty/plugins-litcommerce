@@ -583,7 +583,7 @@ function litc_upload_image_from_url($image_url) {
     }
 
     $filename = basename($image_url);
-    $filename = explode('?', $filename)[0];
+    $filename = time() . '_' .explode('?', $filename)[0];
     $file_path = $upload_dir['path'] . '/' . $filename;
 
     file_put_contents($file_path, $image_data);

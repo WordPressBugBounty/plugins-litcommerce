@@ -7,12 +7,12 @@ Stable tag: 1.2.5
 License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Bulk List/Sync your WooCommerce Products and Orders with biggest online marketplaces like Amazon, eBay, Etsy, TikTok Shop, Walmart, Facebook, etc.
+Bulk List/Sync your WooCommerce Products and Orders with biggest online marketplaces like Amazon, eBay, Etsy, TikTok Shop, Walmart, Facebook Shop, Google Shopping, Faire etc.
 
 == Description ==
 You can simply sell on TikTok Shop, Etsy, eBay, Amazon, Walmart and other channels with [LitCommerce](https://litcommerce.com), a multichannel selling solution for WooCommerce. The most popular eCommerce platforms and Marketplaces may be easily and affordably integrated with WooCommerce by using this software. All you need to do to boost sales is maintain utilizing your WooCommerce site and add LitCommerce as a launch-ready technology!
 
-Multichannel supported: Facebook, Google Shopping, Etsy, Amazon, eBay, Walmart, Wish, OnBuy, Reverb, TikTok Shop, Sears, Bonanza, Shopee.
+Multichannel supported: Facebook Shop, Google Shopping, Etsy, Amazon, eBay, Walmart (US and CA), Faire, Wish, OnBuy, Reverb, TikTok Shop, Bonanza, Shopee, Shein, Temu.
 You can list your items everywhere with LitCommerce:
 - Add WooCommerce items to TikTok Shop
 - Add WooCommerce items to Amazon
