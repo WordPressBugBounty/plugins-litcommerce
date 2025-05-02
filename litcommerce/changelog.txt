@@ -37,3 +37,8 @@
 = 1.2.5 2025-01-21 =
 
 *Fixed: "Compatibility Fix for PHP 8.1."
+
+
+= 1.2.6 2025-05-02 =
+
+*Fixed: "Order Columns."

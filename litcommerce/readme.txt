@@ -3,7 +3,7 @@ Author URI: https://www.litcommerce.com
 Contributors: LitCommerce
 Tags: WooCommerce, Amazon, eBay, Etsy, TikTok
 Tested up to: 6.7.1
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -30,7 +30,7 @@ LitCommerce offers single-listing and multi-listing to manage all listings from 
 - By matching SKUs, link marketplace listings to WooCommerce products to prevent duplication.
 
 *2. Templates and Recipes*
-Utilize Templates and Recipes to quickly create your listing. 
+Utilize Templates and Recipes to quickly create your listing.
 - Utilize Templates, which are sets of attributes and settings for listings, to quickly generate or modify your product listings. When a Template is modified, all listings to which it was applied are also updated.
 - A Recipe is a set of templates for a particular channel for saving more of your time.
 
@@ -40,7 +40,7 @@ By continuously updating inventory counts after each transaction, LitCommerce pr
 - Update with tracking information for shipments across channels.
 
 *4. Use LitCommerce LiveSync to sync in real-time.*
-- Automatically sync in WooCommerce, and LitCommerce will update itself immediately on all sale channels. 
+- Automatically sync in WooCommerce, and LitCommerce will update itself immediately on all sale channels.
 - Create an instantaneous synchronization between your WooCommerce site and your sales channels for product listings, orders, pricing, and inventory.
 
 [youtube https://www.youtube.com/watch?v=y5waX2WXesE]

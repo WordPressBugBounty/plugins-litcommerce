@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.5
+Version: 1.2.6
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -263,7 +263,40 @@ function litc_custom_shop_order_column( $columns ) {
 	}
 	return $reordered_columns;
 }
+add_filter('manage_woocommerce_page_wc-orders_columns', 'litc_custom_shop_order_column', 20);
 
+// Adding custom fields meta data for each new column (example)
+add_action('manage_woocommerce_page_wc-orders_custom_column', 'litc_new_custom_orders_list_column_content', 20, 2);
+function litc_new_custom_orders_list_column_content( $column, $order ) {
+    switch ($column) {
+        case '_litc_order_from' :
+
+            // Get custom post meta data
+            $column_data = $order->get_meta('_litc_order_from');
+            if (!empty($column_data))
+                echo $column_data;
+
+            // Testing (to be removed) - Empty value case
+            else
+                echo '';
+
+            break;
+        case '_litc_order_number' :
+            $column_data = $order->get_meta('_litc_order_number');
+
+            if ($column_data) {
+                $litc_order_id = $order->get_meta('_litc_order_id');
+                if ($litc_order_id) {
+                    echo "<a href='https://app.litcommerce.com/orders/{$litc_order_id}' target='_blank'>{$column_data}</a>";
+                } else {
+                    echo $column_data;
+                }
+            } else {
+                echo '';
+            }
+
+    }
+}
 // Adding custom fields meta data for each new column (example)
 add_action('manage_shop_order_posts_custom_column', 'litc_custom_orders_list_column_content', 20, 2);
 function litc_custom_orders_list_column_content( $column, $post_id ) {
