@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.6
+Version: 1.2.7
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -380,9 +380,9 @@ function litc_change_woocommerce_order_number( $order_id, $order ) {
 			case '_litc_order_number':
 				$order_number = $item->get_data()['value'];
 				break;
-            case '_order_number':
-				$custom_order_number = $item->get_data()['value'];
-				break;
+//            case '_order_number':
+//				$custom_order_number = $item->get_data()['value'];
+//				break;
 			case '_litc_order_number_prefix':
 				$order_number_prefix = $item->get_data()['value'];
 				break;
