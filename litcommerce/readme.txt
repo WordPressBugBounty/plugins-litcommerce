@@ -43,7 +43,7 @@ By continuously updating inventory counts after each transaction, LitCommerce pr
 - Automatically sync in WooCommerce, and LitCommerce will update itself immediately on all sale channels.
 - Create an instantaneous synchronization between your WooCommerce site and your sales channels for product listings, orders, pricing, and inventory.
 
-[youtube https://www.youtube.com/watch?v=y5waX2WXesE]
+[youtube https://www.youtube.com/watch?v=D-DJxCBwtWM]
 
 == WooCommerce integration in a few clicks ==
 
