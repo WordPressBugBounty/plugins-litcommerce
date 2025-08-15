@@ -46,3 +46,7 @@
 = 1.2.7 2025-05-06 =
 
 *Fixed: "Order Number."
+
+= 1.2.8 2025-08-15 =
+
+*Fixed: "Order table: Search query meta keys."

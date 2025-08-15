@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.7
+Version: 1.2.8
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -402,6 +402,8 @@ function litc_shop_order_meta_search_fields( $meta_keys ) {
 }
 
 add_filter('woocommerce_shop_order_search_fields', 'litc_shop_order_meta_search_fields', 10, 1);
+add_filter( 'woocommerce_order_table_search_query_meta_keys', 'litc_shop_order_meta_search_fields' );
+
 function litc_woocommerce_rest_prepare_product_object( $response, $object, $request ) {
 	if (get_litc_params("custom_currency") == 1) {
 		$meta = get_post_meta($object->get_id());
