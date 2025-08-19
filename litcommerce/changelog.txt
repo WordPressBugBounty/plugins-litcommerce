@@ -50,3 +50,7 @@
 = 1.2.8 2025-08-15 =
 
 *Fixed: "Order table: Search query meta keys."
+
+= 1.2.9 2025-08-19 =
+
+*Fixed: "Fix upload images"

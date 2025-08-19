@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.8
+Version: 1.2.9
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -608,7 +608,17 @@ function litc_add_product_images($request) {
         'uploaded_images' => $uploaded_images,
     ]);
 }
+function generate_random_string($length = 10) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
 
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[random_int(0, $charactersLength - 1)];
+    }
+
+    return $randomString;
+}
 function litc_upload_image_from_url($image_url) {
     $upload_dir = wp_upload_dir();
     $image_data = file_get_contents($image_url);
@@ -619,6 +629,10 @@ function litc_upload_image_from_url($image_url) {
 
     $filename = basename($image_url);
     $filename = time() . '_' .explode('?', $filename)[0];
+    if(strlen($filename) > 200){
+        $filename_exp = explode('.', $filename);
+        $filename = generate_random_string(5) . time() . '.' . end($filename_exp);
+    }
     $file_path = $upload_dir['path'] . '/' . $filename;
 
     file_put_contents($file_path, $image_data);
