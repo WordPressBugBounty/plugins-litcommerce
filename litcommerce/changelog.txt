@@ -1,56 +1,55 @@
-== Changelog ==
-= 1.1.5 2024-03-15 =
+*** LitCommerce Changelog ***
 
-*Add: Order Custom Tax Rate
+2025-12-08 - version 1.3.3
+* Fixed - Fix Bugs
 
-= 1.1.6 2024-04-22 =
-*Add: "Compatible with the 'Sequential Order Numbers for WooCommerce by SkyVerge' plugin."
+2025-10-21 - version 1.3.2
+* Fixed - Escape Html
 
-= 1.1.7 2024-08-02 =
+2025-10-08 - version 1.3.1
+* Fixed - Escape Html
 
-*Fix Bug
+2025-10-06 - version 1.3.0
+* Fixed - Bypass Plugin Check
 
-= 1.1.8 2024-08-14 =
+2025-08-19 - version 1.2.9
+* Fixed - Fix upload images
 
-*Add: "Allows retaining the order number in WooCommerce."
+2025-08-15 - version 1.2.8
+* Fixed - Order table: Search query meta keys
 
-= 1.2.0 2024-12-12 =
+2025-05-06 - version 1.2.7
+* Fixed - Order Number
 
-*Update: "Menu Page"
+2025-05-02 - version 1.2.6
+* Fixed - Order Columns
 
-= 1.2.1 2024-12-25 =
+2025-01-21 - version 1.2.5
+* Fixed - Compatibility Fix for PHP 8.1
 
-*Fixed: "Menu Page"
+2025-01-18 - version 1.2.4
+* Fixed - Replaced deprecated FILTER_SANITIZE_STRING with modern sanitization methods for PHP 7.4+ compatibility
 
-= 1.2.2 2025-01-13 =
+2025-01-15 - version 1.2.3
+* Added - Api Add/Delete Image For Product
 
-*Fixed: "Menu Page"
+2025-01-13 - version 1.2.2
+* Fixed - Menu Page
 
-= 1.2.3 2025-01-15 =
+2024-12-25 - version 1.2.1
+* Fixed - Menu Page
 
-*Add: "Api Add/Delete Image For Product"
+2024-12-12 - version 1.2.0
+* Update - Menu Page
 
-= 1.2.4 2025-01-18 =
+2024-08-14 - version 1.1.8
+* Added - Allows retaining the order number in WooCommerce
 
-*Fixed: "Replaced deprecated FILTER_SANITIZE_STRING with modern sanitization methods for PHP 7.4+ compatibility."
+2024-08-02 - version 1.1.7
+* Fixed - Bug fixes
 
-= 1.2.5 2025-01-21 =
+2024-04-22 - version 1.1.6
+* Added - Compatible with the 'Sequential Order Numbers for WooCommerce by SkyVerge' plugin
 
-*Fixed: "Compatibility Fix for PHP 8.1."
-
-
-= 1.2.6 2025-05-02 =
-
-*Fixed: "Order Columns."
-
-= 1.2.7 2025-05-06 =
-
-*Fixed: "Order Number."
-
-= 1.2.8 2025-08-15 =
-
-*Fixed: "Order table: Search query meta keys."
-
-= 1.2.9 2025-08-19 =
-
-*Fixed: "Fix upload images"
+2024-03-15 - version 1.1.5
+* Added - Order Custom Tax Rate

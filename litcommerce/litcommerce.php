@@ -1,8 +1,8 @@
 <?php
 /*
-Plugin Name: LitCommerce
+Plugin Name: LitCommerce: Multi-channel Selling Tool For WooCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.2.9
+Version: 1.3.3
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -58,7 +58,7 @@ class LitCommercePlugin {
     }
 
 	function integrate() {
-		$stepIndex = isset($_POST['step']) ? intval($_POST['step']) : -1;
+        $stepIndex = filter_input( INPUT_POST, 'step', FILTER_SANITIZE_NUMBER_INT );
 		$result = $this->runStep($stepIndex);
 
 		echo json_encode($result);
@@ -82,12 +82,13 @@ class LitCommercePlugin {
 	}
 
 	function enqueueScripts() {
-		wp_enqueue_script(
-			'litcommerce-js',
-			plugin_dir_url(__FILE__) . 'js/litcommerce.js',
-			array('jquery'),
-			'0.1'
-		);
+        wp_enqueue_script(
+                'litcommerce-js',
+                plugin_dir_url(__FILE__) . 'js/litcommerce.js',
+                array('jquery'),
+                '0.1',
+                false
+        );
 
 		wp_enqueue_style(
 			'litcommerce-css',
@@ -131,10 +132,10 @@ class LitCommercePlugin {
                     changes:</p>
                 <ul style="list-style: circle inside;">
 					<?php foreach ($this->steps as $index => $step) { ?>
-                        <li><?php echo $step->getName(); ?></li>
+                        <li><?php echo esc_textarea($step->getName()); ?></li>
 					<?php } ?>
                 </ul>
-                <form method="post" action="<?php echo admin_url('admin.php'); ?>" novalidate="novalidate">
+                <form method="post" action="<?php echo esc_url(admin_url('admin.php')); ?>" novalidate="novalidate">
                     <p class="submit">
                         <input type="hidden" name="action" value="litcommerce_integrate"/>
                         <input type="hidden" name="step" value="0"/>
@@ -147,8 +148,8 @@ class LitCommercePlugin {
                 Integration progress:
                 <ol>
 					<?php foreach ($this->steps as $index => $step) { ?>
-                        <li id="litcommerce-step-<?php echo $index; ?>">
-							<?php echo $step->getName(); ?>
+                        <li id="litcommerce-step-<?php echo esc_textarea($index); ?>">
+							<?php echo esc_textarea($step->getName()); ?>
                         </li>
 					<?php } ?>
                 </ol>
@@ -168,7 +169,7 @@ class LitCommercePlugin {
 			$url = site_url() . '/wp-admin/admin.php?page=litcommerce-integration&reconnect=1'
 			?>
             <p style="font-style: italic">If your site is not yet connected to LitCommerce, please <a
-                        href="<?php echo $url; ?>">click here</a> to reconnect</p>
+                        href="<?php echo esc_url($url); ?>">click here</a> to reconnect</p>
 		<?php } ?>
         <p style="font-style: italic"> If you are using the Cloudflare Web Application Firewall, please follow <a
                     href="https://help.litcommerce.com/en/article/solution-when-your-websites-firewall-blocks-litcommerce-i2ub8p/"
@@ -257,8 +258,8 @@ function litc_custom_shop_order_column( $columns ) {
 		$reordered_columns[$key] = $column;
 		if ($key == 'order_status') {
 			// Inserting after "Status" column
-			$reordered_columns['_litc_order_from'] = __('Source', 'theme_domain');
-			$reordered_columns['_litc_order_number'] = __('LitC Order Number', 'theme_domain');
+			$reordered_columns['_litc_order_from'] = __('Source', 'litcommerce');
+			$reordered_columns['_litc_order_number'] = __('LitC Order Number', 'litcommerce');
 		}
 	}
 	return $reordered_columns;
@@ -274,7 +275,7 @@ function litc_new_custom_orders_list_column_content( $column, $order ) {
             // Get custom post meta data
             $column_data = $order->get_meta('_litc_order_from');
             if (!empty($column_data))
-                echo $column_data;
+                echo esc_textarea($column_data);
 
             // Testing (to be removed) - Empty value case
             else
@@ -287,9 +288,9 @@ function litc_new_custom_orders_list_column_content( $column, $order ) {
             if ($column_data) {
                 $litc_order_id = $order->get_meta('_litc_order_id');
                 if ($litc_order_id) {
-                    echo "<a href='https://app.litcommerce.com/orders/{$litc_order_id}' target='_blank'>{$column_data}</a>";
+                    echo '<a href="' . esc_url("https://app.litcommerce.com/orders/{$litc_order_id}") . '" target="_blank">' . esc_html($column_data) . '</a>';
                 } else {
-                    echo $column_data;
+                    echo esc_textarea($column_data);
                 }
             } else {
                 echo '';
@@ -306,7 +307,7 @@ function litc_custom_orders_list_column_content( $column, $post_id ) {
 			// Get custom post meta data
 			$column_data = get_post_meta($post_id, $column, true);
 			if (!empty($column_data))
-				echo $column_data;
+				echo esc_textarea($column_data);
 
 			// Testing (to be removed) - Empty value case
 			else
@@ -318,9 +319,10 @@ function litc_custom_orders_list_column_content( $column, $post_id ) {
 			if ($column_data) {
 				$litc_order_id = get_post_meta($post_id, '_litc_order_id', true);
 				if ($litc_order_id) {
-					echo "<a href='https://app.litcommerce.com/orders/{$litc_order_id}' target='_blank'>{$column_data}</a>";
+                    echo '<a href="' . esc_url("https://app.litcommerce.com/orders/{$litc_order_id}") . '" target="_blank">' . esc_html($column_data) . '</a>';
+
 				} else {
-					echo $column_data;
+					echo esc_textarea($column_data);
 				}
 			} else {
 				echo '';
@@ -470,13 +472,14 @@ function litc_admin_order_item_values( $_product, $item, $item_id = null ) {
 	$value = $item->get_meta('_litc_item_tax');
 	$order = $item->get_order();
 	if (is_object($order) && method_exists($order, 'get_meta') && $order->get_meta('_litc_has_tax')) {
-		$currency = $order->get_currency();
-		$currency_symbol = get_woocommerce_currency_symbol($currency);
+        $currency = $order->get_currency();
+        $amount   = (float) $value;
 		if ($value) {
 			echo '<td class="item_cost" width="1%" data-sort-value="float">
-		<div class="view">
-			<span class="woocommerce-Price-amount amount"><span class="woocommerce-Price-currencySymbol">' . $currency_symbol . '</span>' . $value . '</span>		</div>
-	</td>';
+        <div class="view">' .
+                    wc_price( $amount, [ 'currency' => $currency ] ) .
+                    '</div>
+      </td>';;
 		} else {
 			echo '<td></td>';
 		}
@@ -506,7 +509,7 @@ function litc_woocommerce_find_rates( $matched_tax_rates ) {
 	if (get_litc_params('from_litc') == 1 && get_litc_params('litc_custom_tax_rate')) {
 		return [
 			0 => [
-				'rate' => $_GET['litc_custom_tax_rate'],
+				'rate' => get_litc_params('litc_custom_tax_rate'),
 				'label' => get_litc_params('litc_custom_tax_label') ? get_litc_params('litc_custom_tax_label') : 'Tax',
 				'shipping' => get_litc_params('litc_custom_shipping_tax') == 1 ? 'yes' : 'no',
 				'compound' => 'no'
@@ -538,10 +541,14 @@ function litc_woocommerce_rest_pre_insert_shop_order_object( $order ) {
         global $wpdb;
 		$using_hpos = class_exists( \Automattic\WooCommerce\Utilities\OrderUtil::class ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
         $order_meta_table = $using_hpos ? $wpdb->prefix . 'wc_orders_meta' : $wpdb->postmeta;
-        $query = "SELECT  IF( MAX( CAST( meta_value as UNSIGNED ) ) IS NULL, 1, MAX( CAST( meta_value as UNSIGNED ) ) + 1 ) as 'max_order_number'
-							FROM {$order_meta_table}
-							WHERE meta_key='_order_number'";
-        $max_order_number = $wpdb->get_row($query, ARRAY_A);
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $max_order_number = $wpdb->get_row($wpdb->prepare(
+                "SELECT IF( MAX( CAST( meta_value as UNSIGNED ) ) IS NULL, 1, MAX( CAST( meta_value as UNSIGNED ) ) + 1 ) as max_order_number
+                FROM %i
+                WHERE meta_key = %s",
+                $order_meta_table,
+                '_order_number'
+        ), ARRAY_A);
         if($max_order_number){
             $order->update_meta_data( '_order_number', $max_order_number['max_order_number']);
 
@@ -695,4 +702,22 @@ function litc_delete_product_image($request) {
         'message' => 'Image removed from product successfully.',
         'remaining_images' => $updated_gallery,
     ]);
+}
+
+add_filter( 'woocommerce_can_restore_order_stock', 'litc_conditional_no_restore_stock', 10, 2 );
+
+function litc_conditional_no_restore_stock( $can_restore, $order ) {
+    if ( ! $order instanceof WC_Order ) {
+        return $can_restore;
+    }
+
+    if ( $order->get_status() === 'cancelled' ||  $order->get_status() === 'refunded') {
+        $no_restore = $order->get_meta( 'litc_order_no_restore_stock' );
+
+        if ( $no_restore == '1' || $no_restore === 'yes' ) {
+            return false;
+        }
+    }
+
+    return $can_restore;
 }
