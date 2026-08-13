@@ -2,8 +2,8 @@
 Author URI: https://www.litcommerce.com
 Contributors: LitCommerce
 Tags: WooCommerce, Amazon, eBay, Etsy, TikTok
-Tested up to: 6.8
-Stable tag: 1.3.3
+Tested up to: 7.1
+Stable tag: 1.3.4
 License: GPL-2.0
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 

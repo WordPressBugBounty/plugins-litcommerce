@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce: Multi-channel Selling Tool For WooCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.3.3
+Version: 1.3.4
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
