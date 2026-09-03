@@ -1,5 +1,8 @@
 *** LitCommerce Changelog ***
-2026-08-13 - version 1.3.4
+2026-09-03 - version 1.3.5
+* Fixed - Add litc_ prefix to global functions to avoid name conflicts
+
+2026-08-13 - version 1.3.3
 * Added - Tested up to: 7.1
 
 

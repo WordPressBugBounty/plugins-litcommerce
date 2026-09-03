@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce: Multi-channel Selling Tool For WooCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.3.4
+Version: 1.3.5
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -100,7 +100,7 @@ class LitCommercePlugin {
 
 	function renderPage() {
 		echo '<h1>LitCommerce: Marketplace Integration</h1>';
-		$is_reconnect = get_litc_params('reconnect') == 1;
+		$is_reconnect = litc_get_params('reconnect') == 1;
 		if (!empty(get_option('woocommerce_litcommerce_consumer_key'))) {
 			$is_connected = true;
 			if ($is_reconnect) {
@@ -156,7 +156,7 @@ class LitCommercePlugin {
                 <p id="litcommerce-result">
                 </p>
             </div>
-			<?php if (get_litc_params('reconnect') == 1) { ?>
+			<?php if (litc_get_params('reconnect') == 1) { ?>
                 <script>
                     var link = document.getElementById('btn-submit');
                     link.click()
@@ -198,7 +198,7 @@ $litcommercePlugin->steps[] = new LitCommerce_SendWooCommerceKeysStep();
 
 add_action('admin_menu', [$litcommercePlugin, 'registerPluginHooks']);
 add_filter('woocommerce_rest_product_object_query', function ( array $args, \WP_REST_Request $request ) {
-	$modified_after = get_litc_params('modified_after');
+	$modified_after = litc_get_params('modified_after');
 
 	if (!$modified_after) {
 		return $args;
@@ -214,8 +214,8 @@ add_filter('woocommerce_rest_product_object_query', function ( array $args, \WP_
 		'paged' => 'litcommercepag',
 	];
 	foreach ($fields as $field => $param) {
-		if (get_litc_params($param)) {
-			$args[$field] = get_litc_params($param);
+		if (litc_get_params($param)) {
+			$args[$field] = litc_get_params($param);
 		}
 	}
 	if ('date' === $args['orderby']) {
@@ -225,7 +225,7 @@ add_filter('woocommerce_rest_product_object_query', function ( array $args, \WP_
 
 }, 10, 2);
 add_filter('woocommerce_rest_shop_order_object_query', function ( array $args, \WP_REST_Request $request ) {
-	$modified_after = get_litc_params('modified_after');
+	$modified_after = litc_get_params('modified_after');
 
 	if (!$modified_after) {
 		return $args;
@@ -241,8 +241,8 @@ add_filter('woocommerce_rest_shop_order_object_query', function ( array $args, \
 		'paged' => 'litcommercepage',
 	];
 	foreach ($fields as $field => $param) {
-		if (get_litc_params($param)) {
-			$args[$field] = get_litc_params($param);
+		if (litc_get_params($param)) {
+			$args[$field] = litc_get_params($param);
 		}
 	}
 	return $args;
@@ -407,7 +407,7 @@ add_filter('woocommerce_shop_order_search_fields', 'litc_shop_order_meta_search_
 add_filter( 'woocommerce_order_table_search_query_meta_keys', 'litc_shop_order_meta_search_fields' );
 
 function litc_woocommerce_rest_prepare_product_object( $response, $object, $request ) {
-	if (get_litc_params("custom_currency") == 1) {
+	if (litc_get_params("custom_currency") == 1) {
 		$meta = get_post_meta($object->get_id());
 		foreach ($meta as $key => $value) {
 			if (in_array($key, ['_price', '_regular_price', '_sale_price'])) {
@@ -416,8 +416,8 @@ function litc_woocommerce_rest_prepare_product_object( $response, $object, $requ
 		}
 	}
 
-	if (get_litc_params("get_terms")) {
-		$terms = explode(',', get_litc_params("get_terms"));
+	if (litc_get_params("get_terms")) {
+		$terms = explode(',', litc_get_params("get_terms"));
 		foreach ($terms as $term) {
 			$terms_data = wp_get_post_terms($object->get_id(), $term);
 			$res = [];
@@ -489,7 +489,7 @@ function litc_admin_order_item_values( $_product, $item, $item_id = null ) {
 	// display the value
 
 }
-function get_litc_params($key)
+function litc_get_params($key)
 {
     $value = filter_input(INPUT_GET, $key, FILTER_SANITIZE_SPECIAL_CHARS);
     if(!$value){
@@ -506,12 +506,12 @@ function litc_woocommerce_hidden_order_itemmeta( $arr ) {
 
 add_filter('woocommerce_hidden_order_itemmeta', 'litc_woocommerce_hidden_order_itemmeta', 10, 1);
 function litc_woocommerce_find_rates( $matched_tax_rates ) {
-	if (get_litc_params('from_litc') == 1 && get_litc_params('litc_custom_tax_rate')) {
+	if (litc_get_params('from_litc') == 1 && litc_get_params('litc_custom_tax_rate')) {
 		return [
 			0 => [
-				'rate' => get_litc_params('litc_custom_tax_rate'),
-				'label' => get_litc_params('litc_custom_tax_label') ? get_litc_params('litc_custom_tax_label') : 'Tax',
-				'shipping' => get_litc_params('litc_custom_shipping_tax') == 1 ? 'yes' : 'no',
+				'rate' => litc_get_params('litc_custom_tax_rate'),
+				'label' => litc_get_params('litc_custom_tax_label') ? litc_get_params('litc_custom_tax_label') : 'Tax',
+				'shipping' => litc_get_params('litc_custom_shipping_tax') == 1 ? 'yes' : 'no',
 				'compound' => 'no'
 			]
 		];
@@ -527,7 +527,7 @@ function litc_woocommerce_find_rates( $matched_tax_rates ) {
 
 add_filter('woocommerce_find_rates', 'litc_woocommerce_find_rates', 10, 3);
 function litc_woocommerce_rate_label( $rate_name ) {
-	if ($litc_custom_tax_label = get_litc_params('litc_custom_tax_label')) {
+	if ($litc_custom_tax_label = litc_get_params('litc_custom_tax_label')) {
 		return $litc_custom_tax_label;
 	}
 	return $rate_name;
@@ -537,7 +537,7 @@ function litc_woocommerce_rate_label( $rate_name ) {
 
 add_filter('woocommerce_rate_label', 'litc_woocommerce_rate_label', 10, 3);
 function litc_woocommerce_rest_pre_insert_shop_order_object( $order ) {
-    if(get_litc_params('from_litc') == 1 && class_exists('WC_Seq_Order_Number')){
+    if(litc_get_params('from_litc') == 1 && class_exists('WC_Seq_Order_Number')){
         global $wpdb;
 		$using_hpos = class_exists( \Automattic\WooCommerce\Utilities\OrderUtil::class ) && \Automattic\WooCommerce\Utilities\OrderUtil::custom_orders_table_usage_is_enabled();
         $order_meta_table = $using_hpos ? $wpdb->prefix . 'wc_orders_meta' : $wpdb->postmeta;
@@ -615,7 +615,7 @@ function litc_add_product_images($request) {
         'uploaded_images' => $uploaded_images,
     ]);
 }
-function generate_random_string($length = 10) {
+function litc_generate_random_string($length = 10) {
     $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     $charactersLength = strlen($characters);
     $randomString = '';
@@ -638,7 +638,7 @@ function litc_upload_image_from_url($image_url) {
     $filename = time() . '_' .explode('?', $filename)[0];
     if(strlen($filename) > 200){
         $filename_exp = explode('.', $filename);
-        $filename = generate_random_string(5) . time() . '.' . end($filename_exp);
+        $filename = litc_generate_random_string(5) . time() . '.' . end($filename_exp);
     }
     $file_path = $upload_dir['path'] . '/' . $filename;
 
