@@ -2,7 +2,7 @@
 /*
 Plugin Name: LitCommerce: Multi-channel Selling Tool For WooCommerce
 Description: Helps you easily integrate your WooCommerce store with LitCommerce.
-Version: 1.3.5
+Version: 1.3.6
 Author: LitCommerce
 Author URI: https://litcommerce.com
 License: GPL2
@@ -662,6 +662,10 @@ function litc_upload_image_from_url($image_url) {
     );
 
     require_once(ABSPATH . 'wp-admin/includes/image.php');
+    // wp_generate_attachment_metadata() calls wp_read_video_metadata()/wp_read_audio_metadata()
+    // for non-image files, and both live in wp-admin/includes/media.php, which is not loaded
+    // during a REST request. Without this the call is fatal and leaves an orphaned attachment.
+    require_once(ABSPATH . 'wp-admin/includes/media.php');
     $attach_data = wp_generate_attachment_metadata($attachment_id, $file_path);
     wp_update_attachment_metadata($attachment_id, $attach_data);
 
